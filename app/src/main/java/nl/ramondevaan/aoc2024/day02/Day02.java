@@ -19,16 +19,17 @@ public class Day02 {
 
   public long solve2() {
     return reports.stream()
-            .filter(report -> isSafe2(report, 1))
-            .count();
+        .filter(report -> isSafe2(report, 1))
+        .count();
   }
 
   private boolean isSafe2(final ImmutableIntArray levels, final int tolerance) {
     return isSafe(levels, levels.get(0), 1, 0, tolerance) ||
-            (tolerance > 0 && isSafe(levels, levels.get(1), 2, 0, tolerance - 1));
+        (tolerance > 0 && isSafe(levels, levels.get(1), 2, 0, tolerance - 1));
   }
 
-  private boolean isSafe(final ImmutableIntArray levels, final int last, final int index, final int lastDifference, final int tolerance) {
+  private boolean isSafe(final ImmutableIntArray levels, final int last, final int index,
+      final int lastDifference, final int tolerance) {
     if (index >= levels.length()) {
       return true;
     }
@@ -44,7 +45,7 @@ public class Day02 {
       result = false;
     }
 
-    return  (result && isSafe(levels, current, index + 1, difference, tolerance)) ||
-            (tolerance > 0 && isSafe(levels, last, index + 1, lastDifference, tolerance - 1));
+    return (result && isSafe(levels, current, index + 1, difference, tolerance)) ||
+        (tolerance > 0 && isSafe(levels, last, index + 1, lastDifference, tolerance - 1));
   }
 }

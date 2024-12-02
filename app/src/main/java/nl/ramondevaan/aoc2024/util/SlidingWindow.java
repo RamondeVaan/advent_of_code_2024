@@ -10,7 +10,7 @@ import java.util.stream.StreamSupport;
 public final class SlidingWindow {
 
   public static <T, R> Stream<Window<R>> windowStream(final List<T> backingList, final int windowSize,
-                                                   final WindowConsumer<T, R> consumer) {
+      final WindowConsumer<T, R> consumer) {
     final var spliterator = new Spliterators.AbstractSpliterator<Window<R>>(
         Math.max(0, backingList.size() - windowSize + 1),
         Spliterator.ORDERED | Spliterator.SIZED) {

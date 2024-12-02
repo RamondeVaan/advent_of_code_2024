@@ -24,16 +24,16 @@ public class Day01 {
     final var rightSorted = rightLocationIdList.stream().sorted().toArray();
 
     return IntStream.range(0, leftSorted.length)
-            .map(i -> Math.abs(leftSorted[i] - rightSorted[i]))
-            .sum();
+        .map(i -> Math.abs(leftSorted[i] - rightSorted[i]))
+        .sum();
   }
 
   public long solve2() {
     final var occurrence = rightLocationIdList.stream().boxed()
-            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
     return leftLocationIdList.stream()
-            .mapToLong(locationId -> locationId * occurrence.getOrDefault(locationId, 0L))
-            .sum();
+        .mapToLong(locationId -> locationId * occurrence.getOrDefault(locationId, 0L))
+        .sum();
   }
 }

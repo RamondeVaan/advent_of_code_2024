@@ -37,7 +37,7 @@ public class IntMap {
 
   public boolean contains(Coordinate coordinate) {
     return coordinate.row() >= 0 && coordinate.row() < rows
-            && coordinate.column() >= 0 && coordinate.column() < columns;
+        && coordinate.column() >= 0 && coordinate.column() < columns;
   }
 
   public int rows() {
@@ -132,7 +132,7 @@ public class IntMap {
 
   public boolean isWithinRange(final Coordinate coordinate) {
     return coordinate.row() >= 0 && coordinate.row() < rows &&
-            coordinate.column() >= 0 && coordinate.column() < columns;
+        coordinate.column() >= 0 && coordinate.column() < columns;
   }
 
   public boolean isWithinRange(final int row, final int column) {
@@ -199,7 +199,7 @@ public class IntMap {
     }
 
     public Builder copyFrom(final IntMap map, final int sourceRowOffset, final int rowOffset,
-            final int sourceColumnOffset, final int columnOffset, final int rows, final int columns) {
+        final int sourceColumnOffset, final int columnOffset, final int rows, final int columns) {
       final int targetRow = rowOffset + rows;
 
       for (int row = rowOffset, sourceRow = sourceRowOffset; row < targetRow; row++, sourceRow++) {
@@ -210,7 +210,7 @@ public class IntMap {
 
     public boolean isWithinRange(final Coordinate coordinate) {
       return coordinate.row() >= 0 && coordinate.row() < rows &&
-              coordinate.column() >= 0 && coordinate.column() < columns;
+          coordinate.column() >= 0 && coordinate.column() < columns;
     }
 
     public IntMap build() {
