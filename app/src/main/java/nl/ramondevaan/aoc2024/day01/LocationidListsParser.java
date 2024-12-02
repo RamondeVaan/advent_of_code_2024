@@ -3,15 +3,17 @@ package nl.ramondevaan.aoc2024.day01;
 import com.google.common.primitives.ImmutableIntArray;
 import nl.ramondevaan.aoc2024.util.Parser;
 import nl.ramondevaan.aoc2024.util.StringIteratorParser;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import java.util.List;
 
-public class LocationidListsParser implements Parser<List<String>, LocationIdLists> {
+public class LocationidListsParser
+        implements Parser<List<String>, ImmutablePair<ImmutableIntArray, ImmutableIntArray>> {
 
     private final static char[] SEPARATOR = new char[] {' ', ' ', ' '};
 
     @Override
-    public LocationIdLists parse(final List<String> toParse) {
+    public ImmutablePair<ImmutableIntArray, ImmutableIntArray> parse(final List<String> toParse) {
         final var left = ImmutableIntArray.builder(toParse.size());
         final var right = ImmutableIntArray.builder(toParse.size());
 
@@ -23,6 +25,6 @@ public class LocationidListsParser implements Parser<List<String>, LocationIdLis
             parser.verifyIsDone();
         }
 
-        return new LocationIdLists(left.build(), right.build());
+        return new ImmutablePair<>(left.build(), right.build());
     }
 }

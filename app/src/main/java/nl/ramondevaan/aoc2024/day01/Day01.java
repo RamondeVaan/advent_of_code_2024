@@ -1,5 +1,7 @@
 package nl.ramondevaan.aoc2024.day01;
 
+import com.google.common.primitives.ImmutableIntArray;
+
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -7,16 +9,19 @@ import java.util.stream.IntStream;
 
 public class Day01 {
 
-  private final LocationIdLists locationIdLists;
+  private final ImmutableIntArray leftLocationIdList;
+  private final ImmutableIntArray rightLocationIdList;
 
   public Day01(final List<String> lines) {
     final var parser = new LocationidListsParser();
-    this.locationIdLists = parser.parse(lines);
+    final var locationIdLists = parser.parse(lines);
+    this.leftLocationIdList = locationIdLists.left;
+    this.rightLocationIdList = locationIdLists.right;
   }
 
   public long solve1() {
-    final var leftSorted = locationIdLists.left().stream().sorted().toArray();
-    final var rightSorted = locationIdLists.right().stream().sorted().toArray();
+    final var leftSorted = leftLocationIdList.stream().sorted().toArray();
+    final var rightSorted = rightLocationIdList.stream().sorted().toArray();
 
     return IntStream.range(0, leftSorted.length)
             .map(i -> Math.abs(leftSorted[i] - rightSorted[i]))
@@ -24,10 +29,10 @@ public class Day01 {
   }
 
   public long solve2() {
-    final var occurrence = locationIdLists.right().stream().boxed()
+    final var occurrence = rightLocationIdList.stream().boxed()
             .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
 
-    return locationIdLists.left().stream()
+    return leftLocationIdList.stream()
             .mapToLong(locationId -> locationId * occurrence.getOrDefault(locationId, 0L))
             .sum();
   }
