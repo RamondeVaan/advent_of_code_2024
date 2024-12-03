@@ -14,16 +14,16 @@ public class Day02 {
   }
 
   public long solve1() {
-    return reports.stream().filter(report -> isSafe2(report, 0)).count();
+    return reports.stream().filter(report -> isSafe(report, 0)).count();
   }
 
   public long solve2() {
     return reports.stream()
-        .filter(report -> isSafe2(report, 1))
+        .filter(report -> isSafe(report, 1))
         .count();
   }
 
-  private boolean isSafe2(final ImmutableIntArray levels, final int tolerance) {
+  private boolean isSafe(final ImmutableIntArray levels, final int tolerance) {
     return isSafe(levels, levels.get(0), 1, 0, tolerance) ||
         (tolerance > 0 && isSafe(levels, levels.get(1), 2, 0, tolerance - 1));
   }
