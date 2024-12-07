@@ -3,8 +3,10 @@ package nl.ramondevaan.aoc2024.util;
 import lombok.EqualsAndHashCode;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @EqualsAndHashCode
 public class IntMap {
@@ -33,6 +35,14 @@ public class IntMap {
 
   public IntStream values() {
     return IntStream.range(0, rows).flatMap(row -> Arrays.stream(this.map[row], 0, columns));
+  }
+
+  public Iterable<IntMapEntry> entries() {
+    return IntMapEntryIterator::new;
+  }
+
+  public Stream<IntMapEntry> streamEntries() {
+    return StreamSupport.stream(entries().spliterator(), false);
   }
 
   public boolean contains(Coordinate coordinate) {
@@ -179,8 +189,17 @@ public class IntMap {
       return this;
     }
 
+    public Builder flag(Coordinate coordinate, int value) {
+      values[coordinate.row()][coordinate.column()] |= value;
+      return this;
+    }
+
     public boolean hasFlag(int row, int column, int flag) {
       return (values[row][column] & flag) == flag;
+    }
+
+    public boolean hasFlag(Coordinate coordinate, int flag) {
+      return (values[coordinate.row()][coordinate.column()] & flag) == flag;
     }
 
     public int get(final Coordinate coordinate) {
@@ -208,6 +227,11 @@ public class IntMap {
       return this;
     }
 
+    public boolean contains(Coordinate coordinate) {
+      return coordinate.row() >= 0 && coordinate.row() < rows
+          && coordinate.column() >= 0 && coordinate.column() < columns;
+    }
+
     public boolean isWithinRange(final Coordinate coordinate) {
       return coordinate.row() >= 0 && coordinate.row() < rows &&
           coordinate.column() >= 0 && coordinate.column() < columns;
@@ -216,6 +240,26 @@ public class IntMap {
     public IntMap build() {
       final var ret = new IntMap(values);
       this.values = null;
+      return ret;
+    }
+  }
+
+  private class IntMapEntryIterator implements Iterator<IntMapEntry> {
+    private int nextRow = 0;
+    private int nextColumn = 0;
+
+    @Override
+    public boolean hasNext() {
+      return nextRow < rows;
+    }
+
+    @Override
+    public IntMapEntry next() {
+      IntMapEntry ret = new IntMapEntry(Coordinate.of(nextRow, nextColumn), map[nextRow][nextColumn]);
+      if (++nextColumn >= columns) {
+        nextColumn = 0;
+        nextRow++;
+      }
       return ret;
     }
   }

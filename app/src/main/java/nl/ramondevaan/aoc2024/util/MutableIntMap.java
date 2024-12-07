@@ -106,6 +106,14 @@ public class MutableIntMap {
     this.map[coordinate.row()][coordinate.column()] = value;
   }
 
+  public int incrementValueAt(int row, int column) {
+    return ++this.map[row][column];
+  }
+
+  public int incrementValueAt(Coordinate coordinate) {
+    return ++this.map[coordinate.row()][coordinate.column()];
+  }
+
   public void fill(int value) {
     for (int row = 0; row < rows; row++) {
       Arrays.fill(this.map[row], value);
