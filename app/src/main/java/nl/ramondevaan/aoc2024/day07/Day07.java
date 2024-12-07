@@ -38,6 +38,9 @@ public class Day07 {
 
   private static boolean isSolvable(final List<Operator> operators, final long testValue, final long currentValue,
       final ImmutableLongArray operands, final int operandIndex) {
+    if (currentValue > testValue) {
+      return false;
+    }
     if (operandIndex == operands.length()) {
       return testValue == currentValue;
     }

@@ -1,5 +1,9 @@
 package nl.ramondevaan.aoc2024.day07;
 
+import com.google.common.math.LongMath;
+
+import java.math.RoundingMode;
+
 public enum Operator {
   ADD {
     @Override
@@ -16,9 +20,7 @@ public enum Operator {
   CONCATENATE {
     @Override
     public long apply(final long left, final long right) {
-      final var leftStr = String.valueOf(left);
-      final var rightStr = String.valueOf(right);
-      return Long.parseLong(leftStr + rightStr);
+      return LongMath.pow(10, LongMath.log10(right, RoundingMode.FLOOR) + 1) * left + right;
     }
   };
 
