@@ -1,7 +1,5 @@
 package nl.ramondevaan.aoc2024.day07;
 
-import com.google.common.primitives.ImmutableLongArray;
-
 import java.util.List;
 
 import static nl.ramondevaan.aoc2024.day07.Operator.*;
@@ -33,27 +31,22 @@ public class Day07 {
   }
 
   private static boolean isSolvable(final Equation equation, final List<Operator> operators) {
-    return isSolvable(operators, equation.testValue(), equation.numbers().get(0), equation.numbers(), 1);
+    return isSolvable(operators, equation.testValue(), equation.numbers().toArray(), equation.numbers().length() - 1);
   }
 
-  private static boolean isSolvable(final List<Operator> operators, final long testValue, final long currentValue,
-      final ImmutableLongArray operands, final int operandIndex) {
-    if (currentValue > testValue) {
-      return false;
-    }
-    if (operandIndex == operands.length()) {
-      return testValue == currentValue;
+  private static boolean isSolvable(final List<Operator> operators, final long value, final long[] operands, final int operandIndex) {
+    if (operandIndex == -1) {
+      return value == 0;
     }
 
-    final var currentOperand = operands.get(operandIndex);
-    final var newOperandIndex = operandIndex + 1;
+    final var currentOperand = operands[operandIndex];
     for (final var operator : operators) {
-      final var newValue = operator.apply(currentValue, currentOperand);
-      if (isSolvable(operators, testValue, newValue, operands, newOperandIndex)) {
+      final var newValue = operator.reverseApply(value, currentOperand);
+      if (operator.reverseApply(value, operands[operandIndex]) >= 0 &&
+          isSolvable(operators, newValue, operands, operandIndex - 1)) {
         return true;
       }
     }
-
     return false;
   }
 }

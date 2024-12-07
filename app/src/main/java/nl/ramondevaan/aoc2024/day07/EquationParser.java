@@ -6,7 +6,6 @@ import nl.ramondevaan.aoc2024.util.StringIteratorParser;
 
 public class EquationParser implements Parser<String, Equation> {
 
-
   @Override
   public Equation parse(final String toParse) {
     final var parser = new StringIteratorParser(toParse);

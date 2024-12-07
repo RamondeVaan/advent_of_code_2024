@@ -7,22 +7,31 @@ import java.math.RoundingMode;
 public enum Operator {
   ADD {
     @Override
-    public long apply(final long left, final long right) {
-      return left + right;
+    public long reverseApply(final long result, final long right) {
+      return result - right;
     }
   },
   MULTIPLY {
     @Override
-    public long apply(final long left, final long right) {
-      return left * right;
+    public long reverseApply(final long result, final long right) {
+      if (result % right == 0) {
+        return result / right;
+      }
+      return -1;
     }
   },
   CONCATENATE {
     @Override
-    public long apply(final long left, final long right) {
-      return LongMath.pow(10, LongMath.log10(right, RoundingMode.FLOOR) + 1) * left + right;
+    public long reverseApply(final long result, final long right) {
+      final var rightLog10 = LongMath.pow(10, LongMath.log10(right, RoundingMode.FLOOR) + 1);
+
+      if (result % rightLog10 == right) {
+        return result / rightLog10;
+      }
+
+      return -1;
     }
   };
 
-  public abstract long apply(long left, long right);
+  public abstract long reverseApply(long result, long right);
 }
