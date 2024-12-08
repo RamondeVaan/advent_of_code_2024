@@ -30,6 +30,14 @@ public record Coordinate(int row, int column) {
     );
   }
 
+  public Coordinate minus(final Coordinate other) {
+    return new Coordinate(this.row - other.row, this.column - other.column);
+  }
+
+  public Coordinate plus(final Coordinate other) {
+    return new Coordinate(this.row + other.row, this.column + other.column);
+  }
+
   public static Coordinate of(int row, int column) {
     return new Coordinate(row, column);
   }

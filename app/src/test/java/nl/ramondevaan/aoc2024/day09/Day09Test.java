@@ -1,4 +1,4 @@
-package nl.ramondevaan.aoc2024.day08;
+package nl.ramondevaan.aoc2024.day09;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,25 +12,25 @@ import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class Day08Test {
+class Day09Test {
 
-  static Day08 day08;
+  static Day09 day09;
 
   @BeforeAll
   static void setUp() throws URISyntaxException, IOException {
-    Path path = Path.of(Objects.requireNonNull(Day08Test.class.getResource("/input/day_08.txt")).toURI());
+    Path path = Path.of(Objects.requireNonNull(Day09Test.class.getResource("/input/day_09.txt")).toURI());
     List<String> lines = Files.readAllLines(path);
-    day08 = new Day08(lines);
+    day09 = new Day09(lines);
   }
 
   @Test
   void puzzle1() {
-    assertEquals(4L, day08.solve1());
+    assertEquals(0L, day09.solve1());
   }
 
   @Test
   void puzzle2() {
-    assertEquals(10L, day08.solve2());
+    assertEquals(0L, day09.solve2());
   }
 
 }
