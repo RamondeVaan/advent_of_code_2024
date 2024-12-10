@@ -59,10 +59,10 @@ public class Day09 {
         if (next.isSpace() && next.size >= file.size) {
           it.remove();
           it.add(file);
-          after.addFirst(new File(-1, file.size));
+          after.addFirst(new File(-1, file.size, true));
           var newSize = next.size - file.size;
           if (newSize > 0) {
-            it.add(new File(-1, newSize));
+            it.add(new File(-1, newSize, true));
           }
           continue outer;
         }
@@ -72,8 +72,7 @@ public class Day09 {
 
     disk.addAll(after);
 
-    var diskIndex = 0L;
-    var sum = 0L;
+    long diskIndex = 0L, sum = 0L;
     for (final var file : disk) {
       if (file.id > 0) {
         sum += file.id * (file.size * (file.size + 2 * diskIndex - 1)) / 2;
@@ -88,20 +87,12 @@ public class Day09 {
     final var ret = new LinkedList<File>();
     boolean isFile = true;
     for (int i = 0; i < diskMap.length(); i++) {
-      ret.add(new File(isFile ? i / 2 : -1, diskMap.get(i)));
-      isFile = !isFile;
+      ret.add(new File(isFile ? i / 2 : -1, diskMap.get(i), isFile = !isFile));
     }
 
     return ret;
   }
 
-  @AllArgsConstructor
-  private static class File {
-    public final int id;
-    public int size;
-
-    public boolean isSpace() {
-      return id == -1;
-    }
+  private record File(int id, int size, boolean isSpace) {
   }
 }
