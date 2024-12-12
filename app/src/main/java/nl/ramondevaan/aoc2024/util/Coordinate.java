@@ -1,5 +1,6 @@
 package nl.ramondevaan.aoc2024.util;
 
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public record Coordinate(int row, int column) {
@@ -40,5 +41,11 @@ public record Coordinate(int row, int column) {
 
   public static Coordinate of(int row, int column) {
     return new Coordinate(row, column);
+  }
+
+  public static Stream<Coordinate> streamClosed(final int rowStart, final int rowEnd, final int columnStart, final int columnEnd) {
+    return IntStream.rangeClosed(rowStart, rowEnd).boxed()
+        .flatMap(row -> IntStream.rangeClosed(columnStart, columnEnd)
+            .mapToObj(column -> new Coordinate(row, column)));
   }
 }

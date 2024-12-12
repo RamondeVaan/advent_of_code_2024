@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.function.ToLongFunction;
 
 public class Day10 {
-  final List<Direction> DIRECTIONS = Arrays.stream(Direction.values()).toList();
+  private final static List<Direction> DIRECTIONS = Arrays.stream(Direction.values()).toList();
 
   private final IntMap map;
 
