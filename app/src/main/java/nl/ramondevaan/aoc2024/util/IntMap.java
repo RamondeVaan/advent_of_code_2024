@@ -50,6 +50,10 @@ public class IntMap {
         && coordinate.column() >= 0 && coordinate.column() < columns;
   }
 
+  private boolean rowEquals(final int row, final int[] values, final int fromColumn) {
+    return Arrays.equals(this.map[row], 0, columns, values, fromColumn, fromColumn + columns);
+  }
+
   public int rows() {
     return rows;
   }
@@ -235,6 +239,27 @@ public class IntMap {
     public boolean isWithinRange(final Coordinate coordinate) {
       return coordinate.row() >= 0 && coordinate.row() < rows &&
           coordinate.column() >= 0 && coordinate.column() < columns;
+    }
+
+    public boolean contains(final IntMap intMap) {
+      if (intMap.rows > rows || intMap.columns > columns) {
+        return false;
+      }
+      final var maxRow = rows - intMap.rows;
+      final var maxColumn = columns - intMap.columns;
+
+      for (int rowOffset = 0; rowOffset <= maxRow; rowOffset++) {
+        outer: for (int columnOffset = 0; columnOffset <= maxColumn; columnOffset++) {
+          for (int row = 0; row < intMap.rows; row++) {
+            if (!intMap.rowEquals(row, this.values[row + rowOffset], columnOffset)) {
+              continue outer;
+            }
+          }
+          return true;
+        }
+      }
+
+      return false;
     }
 
     public IntMap build() {
