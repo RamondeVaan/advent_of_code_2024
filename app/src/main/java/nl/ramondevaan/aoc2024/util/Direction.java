@@ -1,10 +1,8 @@
 package nl.ramondevaan.aoc2024.util;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
-@RequiredArgsConstructor
 public enum Direction {
   NORTH(0b0001, -1, 0) {
     @Override
@@ -68,9 +66,20 @@ public enum Direction {
     }
   };
 
-  private final int flag;
-  private final int rowDiff;
-  private final int columnDiff;
+  public final int flag;
+  public final int rowDiff;
+  public final int columnDiff;
+  public final int absRow;
+  public final int absColumn;
+
+  Direction(final int flag, final int rowDiff, final int columnDiff) {
+    this.flag = flag;
+    this.rowDiff = rowDiff;
+    this.columnDiff = columnDiff;
+    this.absRow = Math.abs(rowDiff);
+    this.absColumn = Math.abs(columnDiff);
+  }
+
 
   public abstract Direction opposite();
 

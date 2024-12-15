@@ -241,6 +241,10 @@ public class IntMap {
           coordinate.column() >= 0 && coordinate.column() < columns;
     }
 
+    public IntMapEntry withValueAt(Coordinate coordinate) {
+      return new IntMapEntry(coordinate, values[coordinate.row()][coordinate.column()]);
+    }
+
     public boolean contains(final IntMap intMap) {
       if (intMap.rows > rows || intMap.columns > columns) {
         return false;
