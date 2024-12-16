@@ -2,10 +2,11 @@ package nl.ramondevaan.aoc2024.day15;
 
 import nl.ramondevaan.aoc2024.util.*;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
-import static java.util.stream.IntStream.range;
 import static nl.ramondevaan.aoc2024.day15.Warehouse.*;
 
 public class Day15 {
@@ -38,11 +39,7 @@ public class Day15 {
     final var map = warehouse.map().toBuilder();
     Coordinate robot = warehouse.robot();
 
-    for (final var movement : movements) {
-      if (move(map, List.of(robot), movement)) {
-        robot = movement.apply(robot);
-      }
-    }
+    for (final var movement : movements) if (move(map, Set.of(robot), movement)) robot = movement.apply(robot);
 
     return map.build()
         .streamEntries()
@@ -52,11 +49,13 @@ public class Day15 {
         .sum();
   }
 
-  private static boolean move(final IntMap.Builder builder, final List<Coordinate> positions,
+  private static boolean move(final IntMap.Builder builder, final Set<Coordinate> positions,
       final Direction direction) {
-    final var positionsPlusOne = positions.stream().map(direction::apply).toList();
-    final var pushingPositions = new HashSet<Coordinate>();
-    for (final var coordinate : positionsPlusOne) {
+    final var positionsPlusOne = new ArrayList<CoordinatePair>(positions.size());
+    final var pushingPositions = new LinkedHashSet<Coordinate>();
+    Coordinate coordinate;
+    for (final var oc : positions) {
+      positionsPlusOne.add(new CoordinatePair(oc, coordinate = direction.apply(oc)));
       var value = builder.get(coordinate);
       if (value == EMPTY) continue;
       if (value == WALL) return false;
@@ -65,11 +64,13 @@ public class Day15 {
       else if (value == BOX_RIGHT) pushingPositions.add(Direction.WEST.apply(coordinate));
     }
 
-    if (pushingPositions.isEmpty() || move(builder, List.copyOf(pushingPositions), direction)) {
-      pushingPositions.forEach(c -> builder.set(c, 0));
-      range(0, positions.size()).forEach(i -> builder.set(positionsPlusOne.get(i), builder.get(positions.get(i))));
+    if (pushingPositions.isEmpty() || move(builder, pushingPositions, direction)) {
+      for (final var c : pushingPositions) builder.set(c, 0);
+      for (final var i : positionsPlusOne) builder.set(i.second(), builder.get(i.first()));
       return true;
     }
     return false;
   }
+
+  private record CoordinatePair(Coordinate first, Coordinate second) {}
 }
