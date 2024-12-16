@@ -50,6 +50,10 @@ public class IntMap {
         && coordinate.column() >= 0 && coordinate.column() < columns;
   }
 
+  public boolean contains(final int row, final int column) {
+    return row >= 0 && row < rows && column >= 0 && column < columns;
+  }
+
   private boolean rowEquals(final int row, final int[] values, final int fromColumn) {
     return Arrays.equals(this.map[row], 0, columns, values, fromColumn, fromColumn + columns);
   }

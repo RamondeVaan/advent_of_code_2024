@@ -43,6 +43,12 @@ public record Coordinate(int row, int column) {
     return new Coordinate(row, column);
   }
 
+  public static Stream<Coordinate> stream(final int rowStart, final int rowEnd, final int columnStart, final int columnEnd) {
+    return IntStream.range(rowStart, rowEnd).boxed()
+        .flatMap(row -> IntStream.range(columnStart, columnEnd)
+            .mapToObj(column -> new Coordinate(row, column)));
+  }
+
   public static Stream<Coordinate> streamClosed(final int rowStart, final int rowEnd, final int columnStart, final int columnEnd) {
     return IntStream.rangeClosed(rowStart, rowEnd).boxed()
         .flatMap(row -> IntStream.rangeClosed(columnStart, columnEnd)
