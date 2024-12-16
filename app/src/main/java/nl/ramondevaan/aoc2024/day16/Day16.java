@@ -40,8 +40,7 @@ public class Day16 {
   private Result solve() {
     final var map = this.maze.map();
     final var score = new int[map.rows()][map.columns()][DIRECTIONS.size()];
-    Coordinate.stream(0, map.rows(), 0, map.columns())
-        .forEach(c -> Arrays.fill(score[c.row()][c.column()], Integer.MAX_VALUE));
+    Coordinate.forEach(0, map.rows(), 0, map.columns(), (r, c) -> Arrays.fill(score[r][c], Integer.MAX_VALUE));
     score[0][0][Direction.EAST.ordinal()] = 0;
     final var last = new PosDir[map.rows()][map.columns()][DIRECTIONS.size()][3];
 
@@ -51,9 +50,8 @@ public class Day16 {
     do {
       if (current.p.equals(maze.endPosition())) return new Result(current, last);
       for (final var nb : current.neighbors()) {
-        if (!map.contains(nb.p) || map.valueAt(nb.p) == WALL || nb.s > score[nb.p.row()][nb.p.column()][nb.d.ordinal()]) {
-          continue;
-        }
+        if (!map.contains(nb.p) || map.valueAt(nb.p) == WALL ||
+            nb.s > score[nb.p.row()][nb.p.column()][nb.d.ordinal()]) continue;
         if (nb.s < score[nb.p.row()][nb.p.column()][nb.d.ordinal()]) {
           Arrays.fill(last[nb.p.row()][nb.p.column()][nb.d.ordinal()], null);
           score[nb.p.row()][nb.p.column()][nb.d.ordinal()] = nb.s;
@@ -66,7 +64,8 @@ public class Day16 {
     throw new IllegalStateException();
   }
 
-  private record Result(PosDir end, PosDir[][][][] last) {}
+  private record Result(PosDir end, PosDir[][][][] last) {
+  }
 
   private record PosDir(Coordinate p, Direction d, int s, int id) {
 

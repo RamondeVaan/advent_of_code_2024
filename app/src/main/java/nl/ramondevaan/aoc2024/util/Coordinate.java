@@ -1,5 +1,6 @@
 package nl.ramondevaan.aoc2024.util;
 
+import java.util.function.IntBinaryOperator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -47,6 +48,14 @@ public record Coordinate(int row, int column) {
     return IntStream.range(rowStart, rowEnd).boxed()
         .flatMap(row -> IntStream.range(columnStart, columnEnd)
             .mapToObj(column -> new Coordinate(row, column)));
+  }
+
+  public static void forEach(final int rowStart, final int rowEnd, final int columnStart, final int columnEnd, final IntBiConsumer consumer) {
+    for (int row = rowStart; row < rowEnd; row++) {
+      for (int column = columnStart; column < columnEnd; column++) {
+        consumer.consume(row, column);
+      }
+    }
   }
 
   public static Stream<Coordinate> streamClosed(final int rowStart, final int rowEnd, final int columnStart, final int columnEnd) {
