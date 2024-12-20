@@ -9,18 +9,27 @@ public record Coordinate(int row, int column) {
     this(0, 0);
   }
 
-  public Stream<Coordinate> neighborsWithinDistance(final int distance) {
-    final var upDown = IntStream.concat(IntStream.range(-distance, 0), IntStream.rangeClosed(1, distance))
-        .boxed()
-        .flatMap(rowDiff -> {
-          final var row = Coordinate.this.row + rowDiff;
-          final var abs = Math.abs(rowDiff);
-          return IntStream.rangeClosed(-distance + abs, distance - abs)
-              .mapToObj(columnDiff -> new Coordinate(row, column + columnDiff));
-        });
-    final var leftRight = IntStream.concat(IntStream.range(-distance, 0), IntStream.rangeClosed(1, distance))
-        .mapToObj(columnDiff -> new Coordinate(row, column + columnDiff));
-    return Stream.concat(upDown, leftRight);
+  public Coordinate[] neighborsWithinDistance(final int distance) {
+    final var ret = new Coordinate[2 * (distance * distance + distance)];
+    int index = 0, rowMinus, rowPlus;
+    for (int rowDiff = 1; rowDiff <= distance; rowDiff++) {
+      rowMinus = row - rowDiff;
+      rowPlus = row + rowDiff;
+      for (int columnDiff = 1; columnDiff <= distance - rowDiff; columnDiff++) {
+        ret[index++] = new Coordinate(rowMinus, column + columnDiff);
+        ret[index++] = new Coordinate(rowMinus, column - columnDiff);
+        ret[index++] = new Coordinate(rowPlus, column + columnDiff);
+        ret[index++] = new Coordinate(rowPlus, column - columnDiff);
+      }
+      ret[index++] = new Coordinate(rowMinus, column);
+      ret[index++] = new Coordinate(rowPlus, column);
+    }
+    for (int columnDiff = 1; columnDiff <= distance; columnDiff++) {
+      ret[index++] = new Coordinate(row, column + columnDiff);
+      ret[index++] = new Coordinate(row, column - columnDiff);
+    }
+
+    return ret;
   }
 
   public Stream<Coordinate> directNeighbors() {

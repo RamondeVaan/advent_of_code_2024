@@ -1,19 +1,16 @@
 package nl.ramondevaan.aoc2024.day20;
 
 import nl.ramondevaan.aoc2024.util.Coordinate;
-import nl.ramondevaan.aoc2024.util.Direction;
 import nl.ramondevaan.aoc2024.util.IntMap;
 import nl.ramondevaan.aoc2024.util.IntMapEntry;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class Day20 {
 
-  private final static List<Direction> DIRECTIONS = Arrays.stream(Direction.values()).toList();
+  private static final int MIN = 100;
   private final RaceTrack raceTrack;
 
   public Day20(final List<String> lines) {
@@ -30,7 +27,7 @@ public class Day20 {
   }
 
   private long solve(final int distance) {
-    return getCheats(findRoute(), distance).filter(cheat -> cheat.timeSaved >= 100).count();
+    return getCheats(findRoute(), distance);
   }
 
   private Route findRoute() {
@@ -56,17 +53,14 @@ public class Day20 {
     return new Route(builder.build(), path);
   }
 
-  private Stream<Cheat> getCheats(final Route route, final int distance) {
-    return route.path.stream()
-        .flatMap(step -> step.coordinate().neighborsWithinDistance(distance)
-            .filter(route.map::contains)
-            .map(route.map::withValueAt)
-            .map(nb -> new Cheat(step, nb, nb.value() - step.value() - step.coordinate().distanceTo(nb.coordinate()))));
+  private long getCheats(final Route r, final int dist) {
+    var sum = 0;
+    for (final var s : r.path)
+      for (final var nb : s.coordinate().neighborsWithinDistance(dist))
+        if (r.map.contains(nb) && r.map.valueAt(nb) - s.value() - s.coordinate().distanceTo(nb) >= MIN) sum++;
+    return sum;
   }
 
   private record Route(IntMap map, List<IntMapEntry> path) {
-  }
-
-  private record Cheat(IntMapEntry from, IntMapEntry to, int timeSaved) {
   }
 }
