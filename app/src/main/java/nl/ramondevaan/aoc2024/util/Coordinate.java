@@ -1,6 +1,5 @@
 package nl.ramondevaan.aoc2024.util;
 
-import java.util.function.IntBinaryOperator;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -8,6 +7,20 @@ public record Coordinate(int row, int column) {
 
   public Coordinate() {
     this(0, 0);
+  }
+
+  public Stream<Coordinate> neighborsWithinDistance(final int distance) {
+    final var upDown = IntStream.concat(IntStream.range(-distance, 0), IntStream.rangeClosed(1, distance))
+        .boxed()
+        .flatMap(rowDiff -> {
+          final var row = Coordinate.this.row + rowDiff;
+          final var abs = Math.abs(rowDiff);
+          return IntStream.rangeClosed(-distance + abs, distance - abs)
+              .mapToObj(columnDiff -> new Coordinate(row, column + columnDiff));
+        });
+    final var leftRight = IntStream.concat(IntStream.range(-distance, 0), IntStream.rangeClosed(1, distance))
+        .mapToObj(columnDiff -> new Coordinate(row, column + columnDiff));
+    return Stream.concat(upDown, leftRight);
   }
 
   public Stream<Coordinate> directNeighbors() {
@@ -38,6 +51,10 @@ public record Coordinate(int row, int column) {
 
   public Coordinate plus(final Coordinate other) {
     return new Coordinate(this.row + other.row, this.column + other.column);
+  }
+
+  public int distanceTo(final Coordinate other) {
+    return Math.abs(this.row - other.row) + Math.abs(this.column - other.column);
   }
 
   public static Coordinate of(int row, int column) {
