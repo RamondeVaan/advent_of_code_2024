@@ -6,6 +6,7 @@ import nl.ramondevaan.aoc2024.util.IntMapEntry;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Day20 {
@@ -54,11 +55,11 @@ public class Day20 {
   }
 
   private long getCheats(final Route r, final int dist) {
-    var sum = 0;
-    for (final var s : r.path)
-      for (final var nb : s.coordinate().neighborsWithinDistance(dist))
-        if (r.map.contains(nb) && r.map.valueAt(nb) - s.value() - s.coordinate().distanceTo(nb) >= MIN) sum++;
-    return sum;
+    return r.path().parallelStream()
+        .mapToLong(s -> Arrays.stream(s.coordinate().neighborsWithinDistance(dist))
+            .filter(nb -> r.map().contains(nb) && r.map().valueAt(nb) - s.value() - s.coordinate().distanceTo(nb) >= MIN)
+            .count())
+        .sum();
   }
 
   private record Route(IntMap map, List<IntMapEntry> path) {
