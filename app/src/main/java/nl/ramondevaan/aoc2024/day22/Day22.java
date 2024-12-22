@@ -46,7 +46,7 @@ public class Day22 {
         changes = ((changes << 5) & MASK) + (9 - lastBananas + (lastBananas = (int) (last = nextSecret(last)) % 10));
         final var index = changes >>> 5;
         final var bitMask = 1 << (changes & 31);
-        if ((visited[changes >>> 5] & bitMask) == 0) {
+        if ((visited[index] & bitMask) == 0) {
           max = Math.max(result[changes] += lastBananas, max);
           visited[index] |= bitMask;
         }
