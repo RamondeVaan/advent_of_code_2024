@@ -5,6 +5,7 @@ import nl.ramondevaan.aoc2024.util.IntMap;
 import nl.ramondevaan.aoc2024.util.Position;
 
 import java.util.List;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import static java.lang.Math.floorMod;
@@ -42,16 +43,11 @@ public class Day14 {
   }
 
   public long solve2() {
-    for (int i = 0; i < 10_000; i++) {
+    return IntStream.rangeClosed(0, 10_000).parallel().filter(i -> {
       final var builder = IntMap.builder(HEIGHT, WIDTH);
       move(i).forEach(lp -> builder.set(lp.y(), lp.x(), 1));
-      if (builder.contains(christmasTree)) {
-        return i;
-      }
-      builder.fill(0);
-    }
-
-    return -1L;
+      return builder.contains(christmasTree);
+    }).findFirst().orElseThrow();
   }
 
   private Stream<Position> move(final int seconds) {
