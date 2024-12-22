@@ -30,22 +30,25 @@ public class Day22 {
   }
 
   public long solve2() {
+    final var intSize = Math.ceilDiv(RESULT_SIZE, 32);
+    final var visited = new int[intSize];
     final var result = new int[RESULT_SIZE];
-    final var visited = new boolean[RESULT_SIZE];
     var max = Integer.MIN_VALUE;
 
     for (int j = 0; j < initialSecretNumbers.length(); j++) {
       final var secret = initialSecretNumbers.get(j);
-      Arrays.fill(visited, false);
+      Arrays.fill(visited, 0);
       var last = secret;
       int changes = 0, lastBananas = (int) (secret % 10);
       for (int i = 0; i < SKIP; i++)
         changes = ((changes << 5) & MASK) + (9 - lastBananas + (lastBananas = (int) (last = nextSecret(last)) % 10));
       for (int i = 0; i < LIMIT; i++) {
         changes = ((changes << 5) & MASK) + (9 - lastBananas + (lastBananas = (int) (last = nextSecret(last)) % 10));
-        if (!visited[changes]) {
+        final var index = changes >>> 5;
+        final var bitMask = 1 << (changes & 31);
+        if ((visited[changes >>> 5] & bitMask) == 0) {
           max = Math.max(result[changes] += lastBananas, max);
-          visited[changes] = true;
+          visited[index] |= bitMask;
         }
       }
     }
