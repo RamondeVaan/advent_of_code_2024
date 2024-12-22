@@ -4,9 +4,7 @@ import com.google.common.primitives.ImmutableLongArray;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.LongStream;
-import java.util.stream.StreamSupport;
 
 public class Day22 {
 
@@ -15,6 +13,7 @@ public class Day22 {
   private final static int SKIP = WINDOW_SIZE - 1;
   private final static int LIMIT = SIZE - WINDOW_SIZE;
   private final static int RESULT_SIZE = 1 << (5 * WINDOW_SIZE);
+  private final static int MASK = RESULT_SIZE - 1;
   private final ImmutableLongArray initialSecretNumbers;
 
   public Day22(final List<String> lines) {
@@ -31,17 +30,30 @@ public class Day22 {
   }
 
   public long solve2() {
-    final var result = new AtomicLong[RESULT_SIZE];
-    for (var i = 0; i < result.length; i++) result[i] = new AtomicLong();
+    final var result = new int[RESULT_SIZE];
+    final var visited = new boolean[RESULT_SIZE];
+    var max = Integer.MIN_VALUE;
 
-    initialSecretNumbers.stream().parallel()
-        .forEach(secret -> StreamSupport.stream(new WindowSpliterator(secret, WINDOW_SIZE, Day22::nextSecret), false)
-            .skip(SKIP).limit(LIMIT).distinct()
-            .forEach(priceChanges -> result[priceChanges.changes()].addAndGet(priceChanges.price())));
-    return Arrays.stream(result).mapToLong(AtomicLong::get).max().orElseThrow();
+    for (int j = 0; j < initialSecretNumbers.length(); j++) {
+      final var secret = initialSecretNumbers.get(j);
+      Arrays.fill(visited, false);
+      var last = secret;
+      int changes = 0, lastBananas = (int) (secret % 10);
+      for (int i = 0; i < SKIP; i++)
+        changes = ((changes << 5) & MASK) + (9 - lastBananas + (lastBananas = (int) (last = nextSecret(last)) % 10));
+      for (int i = 0; i < LIMIT; i++) {
+        changes = ((changes << 5) & MASK) + (9 - lastBananas + (lastBananas = (int) (last = nextSecret(last)) % 10));
+        if (!visited[changes]) {
+          max = Math.max(result[changes] += lastBananas, max);
+          visited[changes] = true;
+        }
+      }
+    }
+
+    return max;
   }
 
-  private static long nextSecret(long secret) {
+  public static long nextSecret(long secret) {
     secret = (secret ^ (secret << 6)) & 16777215;
     secret = (secret ^ (secret >>> 5)) & 16777215;
     return (secret ^ (secret << 11)) & 16777215;
