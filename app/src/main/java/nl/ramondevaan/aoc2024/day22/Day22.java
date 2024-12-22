@@ -1,12 +1,11 @@
 package nl.ramondevaan.aoc2024.day22;
 
 import com.google.common.primitives.ImmutableLongArray;
-import nl.ramondevaan.aoc2024.day22.WindowSpliterator.PriceChanges;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.LongStream;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class Day22 {
@@ -32,18 +31,14 @@ public class Day22 {
   }
 
   public long solve2() {
-    final long[] result = new long[RESULT_SIZE];
-    initialSecretNumbers.stream().boxed()
-        .flatMap(Day22::priceChanges)
-        .forEach(priceChanges -> result[priceChanges.changes()] += priceChanges.price());
-    return Arrays.stream(result).max().orElseThrow();
-  }
+    final var result = new AtomicLong[RESULT_SIZE];
+    for (var i = 0; i < result.length; i++) result[i] = new AtomicLong();
 
-  private static Stream<PriceChanges> priceChanges(final long secret) {
-    return StreamSupport.stream(new WindowSpliterator(secret, WINDOW_SIZE, Day22::nextSecret), false)
-        .skip(SKIP)
-        .limit(LIMIT)
-        .distinct();
+    initialSecretNumbers.stream().parallel()
+        .forEach(secret -> StreamSupport.stream(new WindowSpliterator(secret, WINDOW_SIZE, Day22::nextSecret), false)
+            .skip(SKIP).limit(LIMIT).distinct()
+            .forEach(priceChanges -> result[priceChanges.changes()].addAndGet(priceChanges.price())));
+    return Arrays.stream(result).mapToLong(AtomicLong::get).max().orElseThrow();
   }
 
   private static long nextSecret(long secret) {

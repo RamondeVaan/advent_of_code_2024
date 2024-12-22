@@ -21,12 +21,9 @@ public class WindowSpliterator implements Spliterator<WindowSpliterator.PriceCha
 
   @Override
   public boolean tryAdvance(final Consumer<? super PriceChanges> action) {
-    long next = nextFunction.applyAsLong(last);
-    int nextBananas = (int) next % 10;
+    int nextBananas = (int) (last = nextFunction.applyAsLong(last)) % 10;
     changes = ((changes << 5) & mask) + (nextBananas - lastBananas + 9);
-    action.accept(new PriceChanges(changes, nextBananas));
-    last = next;
-    lastBananas = nextBananas;
+    action.accept(new PriceChanges(changes, lastBananas = nextBananas));
     return true;
   }
 
