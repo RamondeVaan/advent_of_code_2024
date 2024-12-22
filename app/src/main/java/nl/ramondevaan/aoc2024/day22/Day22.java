@@ -1,10 +1,10 @@
 package nl.ramondevaan.aoc2024.day22;
 
 import com.google.common.primitives.ImmutableLongArray;
-import nl.ramondevaan.aoc2024.day22.WindowSpliterator.Price;
+import nl.ramondevaan.aoc2024.day22.WindowSpliterator.PriceChanges;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -12,9 +12,10 @@ import java.util.stream.StreamSupport;
 public class Day22 {
 
   private final static int SIZE = 2000;
-  private final static int DEQUE_SIZE = 4;
-  private final static int SKIP = DEQUE_SIZE - 1;
-  private final static int LIMIT = SIZE - DEQUE_SIZE;
+  private final static int WINDOW_SIZE = 4;
+  private final static int SKIP = WINDOW_SIZE - 1;
+  private final static int LIMIT = SIZE - WINDOW_SIZE;
+  private final static int RESULT_SIZE = 1 << (5 * WINDOW_SIZE);
   private final ImmutableLongArray initialSecretNumbers;
 
   public Day22(final List<String> lines) {
@@ -31,14 +32,15 @@ public class Day22 {
   }
 
   public long solve2() {
-    final var collect = initialSecretNumbers.stream().boxed()
-        .flatMap(Day22::best)
-        .collect(Collectors.groupingBy(Price::changes, Collectors.summingLong(Price::price)));
-    return collect.values().stream().mapToLong(Long::longValue).max().orElseThrow();
+    final long[] result = new long[RESULT_SIZE];
+    initialSecretNumbers.stream().boxed()
+        .flatMap(Day22::priceChanges)
+        .forEach(priceChanges -> result[priceChanges.changes()] += priceChanges.price());
+    return Arrays.stream(result).max().orElseThrow();
   }
 
-  private static Stream<Price> best(final long secret) {
-    return StreamSupport.stream(new WindowSpliterator(secret, DEQUE_SIZE, Day22::nextSecret), false)
+  private static Stream<PriceChanges> priceChanges(final long secret) {
+    return StreamSupport.stream(new WindowSpliterator(secret, WINDOW_SIZE, Day22::nextSecret), false)
         .skip(SKIP)
         .limit(LIMIT)
         .distinct();

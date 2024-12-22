@@ -1,42 +1,37 @@
 package nl.ramondevaan.aoc2024.day22;
 
-import java.util.ArrayDeque;
-import java.util.List;
-import java.util.Objects;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 import java.util.function.LongUnaryOperator;
-import java.util.stream.Stream;
 
-public class WindowSpliterator implements Spliterator<WindowSpliterator.Price> {
+public class WindowSpliterator implements Spliterator<WindowSpliterator.PriceChanges> {
 
-  private final ArrayDeque<Long> window;
   private final LongUnaryOperator nextFunction;
+  private final int mask;
+  private int changes;
   private long last;
-  private long lastBananas;
+  private int lastBananas;
 
-  public WindowSpliterator(final long secret, final int dequeSize, LongUnaryOperator nextFunction) {
+  public WindowSpliterator(final long secret, final int windowSize, LongUnaryOperator nextFunction) {
     this.nextFunction = nextFunction;
     this.last = secret;
-    this.lastBananas = secret % 10;
-    this.window = new ArrayDeque<>(dequeSize);
-    window.addAll(Stream.generate(() -> Long.MAX_VALUE).limit(dequeSize).toList());
+    this.lastBananas = (int) secret % 10;
+    this.mask = (1 << (5 * windowSize)) - 1;
   }
 
   @Override
-  public boolean tryAdvance(final Consumer<? super WindowSpliterator.Price> action) {
+  public boolean tryAdvance(final Consumer<? super PriceChanges> action) {
     long next = nextFunction.applyAsLong(last);
-    long nextBananas = next % 10;
-    window.pollFirst();
-    window.addLast(nextBananas - lastBananas);
-    action.accept(new Price(window.stream().toList(), nextBananas));
+    int nextBananas = (int) next % 10;
+    changes = ((changes << 5) & mask) + (nextBananas - lastBananas + 9);
+    action.accept(new PriceChanges(changes, nextBananas));
     last = next;
     lastBananas = nextBananas;
     return true;
   }
 
   @Override
-  public Spliterator<WindowSpliterator.Price> trySplit() {
+  public Spliterator<PriceChanges> trySplit() {
     return null;
   }
 
@@ -50,17 +45,17 @@ public class WindowSpliterator implements Spliterator<WindowSpliterator.Price> {
     return ORDERED | IMMUTABLE | NONNULL;
   }
 
-  public record Price(List<Long> changes, long price) {
+  public record PriceChanges(int changes, long price) {
     @Override
     public boolean equals(final Object o) {
       if (o == null || getClass() != o.getClass()) return false;
-      final Price price = (Price) o;
-      return Objects.equals(changes, price.changes);
+      final PriceChanges price = (PriceChanges) o;
+      return changes == price.changes;
     }
 
     @Override
     public int hashCode() {
-      return Objects.hashCode(changes);
+      return changes;
     }
   }
 }
