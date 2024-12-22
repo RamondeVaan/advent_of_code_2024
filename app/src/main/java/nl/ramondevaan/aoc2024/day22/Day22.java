@@ -30,8 +30,7 @@ public class Day22 {
   }
 
   public long solve2() {
-    final var intSize = Math.ceilDiv(RESULT_SIZE, 32);
-    final var visited = new int[intSize];
+    final var visited = new int[Math.ceilDiv(RESULT_SIZE, 32)];
     final var result = new int[RESULT_SIZE];
     var max = Integer.MIN_VALUE;
 
