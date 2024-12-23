@@ -22,16 +22,16 @@ public class MaxCliqueFinder {
     for (int i = 0; i < pSize; i++) {
       final var v = p[i];
       int[] newP = new int[Math.min(pSize, network.neighborsSize[v])];
-      int newPSize = i2(p, i, pSize, newP, v);
-      int[] newX = new int[network.size];
-      int newXSize = i2(x, 0, xSize, newX, v);
+      int newPSize = intersection(p, i, pSize, newP, v);
+      int[] newX = new int[newPSize + xSize];
+      int newXSize = intersection(x, 0, xSize, newX, v);
       r[rSize] = v;
       computeImpl(r, rSize + 1, newP, newPSize, newX, newXSize);
       x[xSize++] = v;
     }
   }
 
-  private int i2(final int[] arr, int offset, int arrSize, final int[] result, final int v) {
+  private int intersection(final int[] arr, int offset, int arrSize, final int[] result, final int v) {
     int size = 0;
     for (int i = offset; i < arrSize; i++) if (network.connected[v][arr[i]]) result[size++] = arr[i];
     return size;
