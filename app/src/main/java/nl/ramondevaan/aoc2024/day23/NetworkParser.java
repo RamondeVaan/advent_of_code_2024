@@ -8,7 +8,7 @@ import java.util.List;
 public class NetworkParser implements Parser<List<String>, Network> {
   @Override
   public Network parse(final List<String> toParse) {
-    final var network = new Network();
+    final var builder = Network.builder(26 * 26);
 
     for (final var line : toParse) {
       final var parser = new StringIteratorParser(line);
@@ -16,10 +16,10 @@ public class NetworkParser implements Parser<List<String>, Network> {
       parser.consume('-');
       final var to = parseVertex(parser);
       parser.verifyIsDone();
-      network.add(from, to);
+      builder.add(from, to);
     }
 
-    return network;
+    return builder.build();
   }
 
   private int parseVertex(final StringIteratorParser parser) {
