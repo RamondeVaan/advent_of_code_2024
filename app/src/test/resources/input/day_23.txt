@@ -1,0 +1,6 @@
+ta-tb
+ta-tc
+tb-tc
+ta-aa
+ta-ab
+aa-ab
