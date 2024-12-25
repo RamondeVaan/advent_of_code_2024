@@ -31,7 +31,7 @@ public class Day24 {
     this.gates = partitions.get(1).stream().map(gateParser::parse).toList();
     this.gatesByOutput = Collections.unmodifiableMap(gates.stream()
         .collect(Collectors.toMap(Gate::getResultId, Function.identity())));
-    this.zGates = gates.stream().filter(Gate::isOutputGate).sorted(comparing(Gate::getResultId).reversed()).toList();
+    this.zGates = gates.stream().filter(Gate::isOutputGate).sorted(comparing(Gate::getResultId)).toList();
     this.gatesByInput = Collections.unmodifiableMap(gates.stream()
         .flatMap(gate -> gate.getInputs().map(input -> ImmutablePair.of(input, gate)))
         .collect(groupingBy(ImmutablePair::getLeft, mapping(ImmutablePair::getRight, toList()))));
@@ -45,7 +45,7 @@ public class Day24 {
 
   private long solve(final Map<String, Boolean> values) {
     var result = 0L;
-    for (int i = zGates.size() - 1; i >= 0; i--) if (solve(zGates.get(i), values)) result |= (1L << i);
+    for (int i = 0; i < zGates.size(); i++) if (solve(zGates.get(i), values)) result |= (1L << i);
     return result;
   }
 
@@ -70,7 +70,7 @@ public class Day24 {
     wrongWires.addAll(getWrongZWires());
     wrongWires.addAll(getWrongCarryWires());
     wrongWires.addAll(getWrongResultWires());
-    gatesByInput.get(xIds.getFirst()).stream().filter(Gate::isXOR).filter(not(zGates.getLast()::equals))
+    gatesByInput.get(xIds.getFirst()).stream().filter(Gate::isXOR).filter(not(zGates.getFirst()::equals))
         .map(Gate::getResultId).forEach(wrongWires::add);
 
     return wrongWires.stream().sorted().collect(Collectors.joining(","));
@@ -85,8 +85,8 @@ public class Day24 {
 
   private Set<String> getWrongZWires() {
     final var wrongWires = new HashSet<String>();
-    Optional.of(zGates.getFirst()).filter(not(Gate::isOR)).map(Gate::getResultId).ifPresent(wrongWires::add);
-    zGates.stream().skip(1)
+    Optional.of(zGates.getLast()).filter(not(Gate::isOR)).map(Gate::getResultId).ifPresent(wrongWires::add);
+    zGates.stream().limit(zGates.size() - 1)
         .filter(not(Gate::isXOR))
         .map(Gate::getResultId).forEach(wrongWires::add);
     return wrongWires;
